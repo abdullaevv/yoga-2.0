@@ -68,7 +68,7 @@ window.addEventListener('DOMContentLoaded', function() {
             } else {
                 hours.textContent = t.hours;
             }
-            
+
             //тоже самое только короче)
             minutes.textContent = t.minutes < 10 ? '0' + t.minutes : t.minutes;
             seconds.textContent = t.seconds < 10 ? '0' + t.seconds : t.seconds;
@@ -86,4 +86,22 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
     setClock('timer', deadLine);
+
+    //modal
+
+    let more = document.querySelector('.more'),
+        overlay = document.querySelector('.overlay'),
+        close = document.querySelector('.popup-close');
+
+    more.addEventListener('click', function() {
+        overlay.style.display = 'block';
+        this.classList.add('more-slash'); // Добавили кнопке класс more-slash (в которой анимация)
+        document.body.style.overflow = 'hidden';
+    });
+        close.addEventListener('click', function() {
+            overlay.style.display = 'none';
+            more.classList.add('more-slash');
+            document.body.style.overflow = '';
+
+    });
 });
