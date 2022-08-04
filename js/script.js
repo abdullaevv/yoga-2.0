@@ -114,45 +114,60 @@ window.addEventListener('DOMContentLoaded', function() {
         failure: 'Что-то пошло не так...'
     };
 
-    let form = document.querySelector('.main-form'),
+    let form = document.querySelector('.main-form')[0], //получаем данные с html
+
         input = form.getElementsByTagName('input'),
-        statusMessage = document.createElement('div');
+        statusMessage = document.createElement('div'); //создал div
+        statusMessage.classList.add('status'); //и добавил класс статус
 
-        statusMessage.classList.add('status');
+    function sendForm(elem) {
+        elem.addEventListener('submit', function(e) { //обработчик с событием submit обязательно присваивается на саму форму, а не на кнопку
+            e.preventDefault(); //что бы не перезагружалсь страница при отправке номера
+                form.appendChild(statusMessage); //добавли div с сообщение о статусе
+                let formData = new FormData(elem); //создаем объект для формы
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
-        form.appendChild(statusMessage);
+            function postData(data) {
+                return new Promise(function(resolve, reject) {
+                    let request = new XMLHttpRequest(); //использовал htr что бы работать с ajax
+                    request.open('POST', 'server.php');//определяем какой метод и место файла с настройками сервера
+                    request.setRequestHeader('Content-type', 'application/json; charset=utf-8'); //application/x-www-form-urlencoded в обычном случае
 
-        let request = new XMLHttpRequest();
-        request.open('POST', 'server.php');
-        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+                    
 
-        let formData = new FormData(form);
+                    request.onreadystatechange = function() { //проверка
+                        if (request.readyState < 4) {
+                            resolve();
+                        } else if (request.readyState === 4) {
+                            if (request.status == 200) {
+                                resolve();
+                            }
+                            else {
+                                reject();
+                            }
+                        }
+                    };
 
-        let obj = {};
-        formData.forEach(function(value, key) {
-            obj[key] = value;
-        });
-        let json = JSON.stringify(obj);
+                    request.send(data); 
 
-        request.send(json);
+                });
+            } //postData
 
-        request.addEventListener('readystatechange', function() {
-            if (request.readyState < 4) {
-                statusMessage.innerHTML = message.loading;
-            } else if(request.readyState === 4 && request.status == 200) {
-                statusMessage.innerHTML = message.success;
-            } else {
-                statusMessage.innerHTML = message.failure;
+            function clearInput(){
+                for (let i = 0; i < input.length; i++) { //обнуление inputов
+                    input[i].value = '';
+                }
+                
             }
+
+            postData(formData)
+                .then(() => statusMessage.innerHTML = message.loading)
+                .then(() => {
+                    statusMessage.innerHTML = '';
+                })
+                .catch(() => statusMessage.innerHTML = message.failure)
+                .then(clearInput)
         });
-
-        for (let i = 0; i < input.length; i++) {
-            input[i].value = '';
-        }
-    });
-
-
+    };
+    sendForm(form);
 });
     
