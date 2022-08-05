@@ -114,7 +114,7 @@ window.addEventListener('DOMContentLoaded', function() {
         failure: 'Что-то пошло не так...'
     };
 
-    let form = document.querySelector('.main-form')[0], //получаем данные с html
+    let form = document.querySelector('.main-form'), //получаем данные с html
 
         input = form.getElementsByTagName('input'),
         statusMessage = document.createElement('div'); //создал div
@@ -130,7 +130,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 return new Promise(function(resolve, reject) {
                     let request = new XMLHttpRequest(); //использовал htr что бы работать с ajax
                     request.open('POST', 'server.php');//определяем какой метод и место файла с настройками сервера
-                    request.setRequestHeader('Content-type', 'application/json; charset=utf-8'); //application/x-www-form-urlencoded в обычном случае
+                    request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); //application/x-www-form-urlencoded в обычном случае
 
                     
 
